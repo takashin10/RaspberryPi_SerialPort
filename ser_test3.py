@@ -1,8 +1,15 @@
 #! /usr/bin/python
 import serial
 import time
-#from serial import serial
+import RPi.GPIO as GPIO
 
+# BOARDpin No
+GPIO.setmode(GPIO.BOARD)
+
+GPIO.setup(7, GPIO.OUT)
+GPIO.setup(11, GPIO.OUT)
+
+	
 # open serial port
 try:
 	port = "/dev/rfcomm0"
@@ -25,34 +32,34 @@ print("write date: " + x)
 # read response from serial port
 seq = []
 count=1
-while 1:
+readdata=''
+try:
+  while 1:
 #recieve
 	time.sleep(1)
 	if ser.inWaiting() > 0:
 #		print(ser.inWaiting())
-		print ser.read(ser.inWaiting())
-#		for i in range(ser.inWaiting()):
-#			print(i,bytes([i]))
-#			print(i,ser.read(1))
-#		print(ser.readline())
-#	for c in ser.read():
-#		seq.append(chr(c)) #convert from ANSII
-#		joined_seq = ''.join(str(v) for v in seq) #Make a string from array
-##		if chr(c) == '\n':
-#			print("Line " + str(count) + ': ' + joined_seq)		
-#			seq = []
-##			count += 1
-#			break
-#		print(str(count) + str(':') + chr(line))
-#		count = count+1
-#	line = ser.readline()
-#	print(lines.append(line.decode('utf-8').rstrip()))
-	
+#		print ser.read(ser.inWaiting())
+	  readdata = ser.read(ser.inWaiting())
+	  print readdata
+	  if readdata == 'f':
+	     print("forward\n")
+	     GPIO.output(7, GPIO.HIGH)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+             GPIO.output(7, GPIO.LOW)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+	  elif readdata == "b": 
+	     print("back\n")
+	     GPIO.output(7, GPIO.HIGH)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+             GPIO.output(7, GPIO.LOW)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+except KeyboardInterrupt:
+  ser.close()
+  GPIO.cleanup()
+  print("Program exit\n")
 
-	#wait for new data after each line
-#	timeout = time.time() + 0.1
-#	while not ser.inWaiting() and timeout > time.time():
-#		pass
-#	if not ser.inWaiting():
-#		break
-ser.close()
