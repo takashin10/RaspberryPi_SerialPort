@@ -28,7 +28,37 @@ while 1:
   if os.path.exists(port):
     ser=serial.Serial(port,baudrate)
     print("Connection OK")
-    break 
+
+    readdata=''
+    try:
+      while 1:
+	time.sleep(1)
+	if ser.inWaiting() > 0:
+#		print(ser.inWaiting())
+#		print ser.read(ser.inWaiting())
+	  readdata = ser.read(ser.inWaiting())
+	  print readdata
+	  if readdata == 'f':
+	     print("forward\n")
+	     GPIO.output(7, GPIO.HIGH)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+             GPIO.output(7, GPIO.LOW)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+	  elif readdata == "b": 
+	     print("back\n")
+	     GPIO.output(7, GPIO.HIGH)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+             GPIO.output(7, GPIO.LOW)
+             GPIO.output(11, GPIO.LOW)
+             time.sleep(1)
+    except KeyboardInterrupt:
+      ser.close()
+      GPIO.cleanup()
+      print("Program exit\n")
+      break
 # Clear input buffer
 ser.flushInput()
 
@@ -40,9 +70,8 @@ x = "pyserial test write/read\n"
 ser.write(x)
 print("write date: " + x)
 
+'''
 # read response from serial port
-seq = []
-count=1
 readdata=''
 try:
   while 1:
@@ -73,4 +102,4 @@ except KeyboardInterrupt:
   ser.close()
   GPIO.cleanup()
   print("Program exit\n")
-
+'''
