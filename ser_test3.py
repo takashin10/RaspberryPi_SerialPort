@@ -2,6 +2,7 @@
 import serial
 import time
 import RPi.GPIO as GPIO
+import os.path
 
 # BOARDpin No
 GPIO.setmode(GPIO.BOARD)
@@ -11,13 +12,23 @@ GPIO.setup(11, GPIO.OUT)
 
 	
 # open serial port
+'''
 try:
 	port = "/dev/rfcomm0"
 	baudrate = 115200
+	print(os.path.exists(port))
 	ser=serial.Serial(port,baudrate)
 except serial.SerialException as e:
 	print("could not open serial port '{}':{}".format(port,e))
+'''
+while 1:
+  port = "/dev/rfcomm0"
+  baudrate = 115200
 
+  if os.path.exists(port):
+    ser=serial.Serial(port,baudrate)
+    print("Connection OK")
+    break 
 # Clear input buffer
 ser.flushInput()
 
@@ -52,8 +63,8 @@ try:
              time.sleep(1)
 	  elif readdata == "b": 
 	     print("back\n")
-	     GPIO.output(7, GPIO.LOW)
-             GPIO.output(11, GPIO.HIGH)
+	     GPIO.output(7, GPIO.HIGH)
+             GPIO.output(11, GPIO.LOW)
              time.sleep(1)
              GPIO.output(7, GPIO.LOW)
              GPIO.output(11, GPIO.LOW)
